@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, OnModuleInit } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { Article } from './article.model';
 import { Repository } from 'typeorm';
@@ -6,9 +6,10 @@ import { CreateArticleDto } from './dto/create-article.dto';
 import { ARTICLE_NOT_FOUND_ERROR_MESSAGE } from './article.constants';
 import { GetArticleDto } from './dto/get-article.dto';
 import { ResponseItems } from '../core/interfaces/response-items.dto';
+import { articles } from './articles.init';
 
 @Injectable()
-export class ArticlesService {
+export class ArticlesService implements OnModuleInit {
   constructor(
     @InjectRepository(Article)
     private readonly articleRepository: Repository<Article>,
@@ -45,7 +46,7 @@ export class ArticlesService {
     };
   }
 
-  public async findById(id: string): Promise<Article> {
+  public async findById(id: string | number): Promise<Article> {
     return await this.articleRepository.findOne({
       where: { id: +id },
     });
@@ -86,5 +87,21 @@ export class ArticlesService {
       );
     }
     await this.articleRepository.delete(id);
+  }
+
+  public async onModuleInit(): Promise<void> {
+    for (const article of articles) {
+      const find = await this.findById(article.id);
+      if (!find) {
+        await this.articleRepository.save(article);
+      } else {
+        await this.articleRepository.update(article.id, {
+          title: article.title,
+          description: article.description,
+          image: article.image,
+          email: article.email,
+        });
+      }
+    }
   }
 }
