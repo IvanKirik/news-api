@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserModel } from './user.model';
@@ -8,7 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 import { USER_NOT_FOUND, WRONG_PASSWORD_ERROR } from './auth.constants';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements OnModuleInit {
   constructor(
     @InjectRepository(UserModel)
     private readonly userRepository: Repository<UserModel>,
@@ -48,5 +52,20 @@ export class AuthService {
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+
+  public async onModuleInit(): Promise<void> {
+    const adminExists = await this.userRepository.findOne({
+      where: { email: 'admin@example.com' },
+    });
+
+    if (!adminExists) {
+      const admin = this.userRepository.create({
+        email: 'admin@example.com',
+        passwordHash: await hash('password', 10),
+      });
+
+      await this.userRepository.save(admin);
+    }
   }
 }
