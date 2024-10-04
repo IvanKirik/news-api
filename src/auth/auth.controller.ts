@@ -11,6 +11,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { ALREADY_REGISTERED_ERROR } from './auth.constants';
+import { RefreshDto } from './dto/refresh.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -32,6 +33,12 @@ export class AuthController {
   @Post('login')
   public async login(@Body() dto: AuthDto) {
     const user = await this.authService.validateUser(dto.email, dto.password);
-    return this.authService.login(user.email);
+    return this.authService.login(user);
+  }
+
+  @UsePipes(new ValidationPipe())
+  @Post('refresh')
+  public async refresh(@Body() { refreshToken }: RefreshDto) {
+    return await this.authService.refresh(refreshToken);
   }
 }

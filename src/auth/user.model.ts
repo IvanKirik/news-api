@@ -17,6 +17,9 @@ export class UserModel {
   @Column()
   passwordHash: string;
 
+  @Column({ nullable: true })
+  refreshToken: string;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

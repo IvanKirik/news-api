@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
   HttpException,
   HttpStatus,
   Param,
@@ -49,13 +48,13 @@ export class ArticlesController {
 
   @UsePipes(new ValidationPipe())
   @Post('create')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   public async createArticle(@Body() dto: CreateArticleDto): Promise<Article> {
     return await this.articlesService.create(dto);
   }
 
   @Patch(':id')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   public async updateArticle(
     @Param('id') id: string,
     @Body() dto: CreateArticleDto,
@@ -64,7 +63,7 @@ export class ArticlesController {
   }
 
   @Delete(':id')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   public deleteArticle(@Param('id') id: string): Promise<void> {
     return this.articlesService.delete(id);
   }
