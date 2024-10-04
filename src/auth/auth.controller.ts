@@ -7,11 +7,12 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { ALREADY_REGISTERED_ERROR } from './auth.constants';
 import { RefreshDto } from './dto/refresh.dto';
+import { TokensResponseDto } from './dto/tokens-response.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -29,6 +30,10 @@ export class AuthController {
   }
 
   @UsePipes(new ValidationPipe())
+  @ApiOkResponse({
+    type: TokensResponseDto,
+    description: 'Authenticated token successfully.',
+  })
   @HttpCode(200)
   @Post('login')
   public async login(@Body() dto: AuthDto) {
@@ -37,6 +42,10 @@ export class AuthController {
   }
 
   @UsePipes(new ValidationPipe())
+  @ApiOkResponse({
+    type: TokensResponseDto,
+    description: 'Authenticated token successfully.',
+  })
   @Post('refresh')
   public async refresh(@Body() { refreshToken }: RefreshDto) {
     return await this.authService.refresh(refreshToken);

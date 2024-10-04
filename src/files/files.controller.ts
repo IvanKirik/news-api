@@ -7,7 +7,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { FileElementResponse } from './dto/file-element.response';
 import { MediaFile } from './media-file.class';
 import { FilesService } from './files.service';
@@ -30,6 +30,10 @@ export class FilesController {
         },
       },
     },
+  })
+  @ApiOkResponse({
+    description: 'Create a file',
+    type: [FileElementResponse],
   })
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)

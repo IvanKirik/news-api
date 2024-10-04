@@ -15,12 +15,13 @@ import {
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { Article } from './article.model';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { ARTICLE_NOT_FOUND_ERROR_MESSAGE } from './article.constants';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { GetArticleDto } from './dto/get-article.dto';
 import { ResponseItems } from '../core/interfaces/response-items.dto';
+import { ResponseArticlesDto } from './dto/response-articles.dto';
 
 @ApiTags('Articles')
 @Controller('articles')
@@ -28,6 +29,10 @@ export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
 
   @Get()
+  @ApiOkResponse({
+    type: ResponseArticlesDto,
+    description: 'Get a articles',
+  })
   public async getArticles(
     @Query() params: GetArticleDto,
   ): Promise<ResponseItems<Article>> {
@@ -35,6 +40,10 @@ export class ArticlesController {
   }
 
   @Get(':id')
+  @ApiOkResponse({
+    type: Article,
+    description: 'Get a article',
+  })
   public async getArticle(@Param('id') id: string) {
     const article = await this.articlesService.findById(id);
     if (!article) {
@@ -48,12 +57,20 @@ export class ArticlesController {
 
   @UsePipes(new ValidationPipe())
   @Post('create')
+  @ApiOkResponse({
+    type: Article,
+    description: 'Create a article',
+  })
   @UseGuards(JwtAuthGuard)
   public async createArticle(@Body() dto: CreateArticleDto): Promise<Article> {
     return await this.articlesService.create(dto);
   }
 
   @Patch(':id')
+  @ApiOkResponse({
+    type: Article,
+    description: 'Update a article',
+  })
   @UseGuards(JwtAuthGuard)
   public async updateArticle(
     @Param('id') id: string,

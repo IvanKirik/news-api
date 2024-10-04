@@ -11,7 +11,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('News api')
-    .setDescription('The cats API description')
+    .setDescription('The news API description')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
@@ -19,4 +19,5 @@ async function bootstrap() {
 
   await app.listen(PORT);
 }
+
 bootstrap();
