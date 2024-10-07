@@ -22,6 +22,20 @@ export class GetArticleDto {
   @Min(100)
   limit?: number = 10;
 
+  @ApiProperty({
+    required: false,
+    description: 'Array of tag IDs. Example queryParams - tags=1,2,44',
+  })
+  @IsOptional()
+  tags?: string;
+
+  @ApiProperty({
+    required: false,
+    description: 'Array of email IDs. Example queryParams - emails=1,2,44',
+  })
+  @IsOptional()
+  emails?: string;
+
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()

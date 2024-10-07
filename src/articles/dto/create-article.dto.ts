@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
+import { CreateTagDto } from '../../tags/dto/create-tag.dto';
+import { Email } from '../../emails/email.model';
+import { CreateEmailDto } from '../../emails/dto/create-email.dto';
 
 export class CreateArticleDto {
   @IsString()
@@ -14,7 +17,17 @@ export class CreateArticleDto {
   @ApiProperty({ required: false })
   image: string;
 
+  @ApiProperty({ required: false, type: [CreateTagDto] })
+  tags: CreateTagDto[];
+
+  @ApiProperty({ required: false, type: [CreateEmailDto] })
+  emails: CreateEmailDto[];
+
   @IsString()
   @ApiProperty()
-  email: string;
+  emailIsAuthor: string;
+
+  @IsString()
+  @ApiProperty()
+  nameIsAuthor: string;
 }

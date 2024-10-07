@@ -9,7 +9,6 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -18,7 +17,6 @@ import { Article } from './article.model';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { ARTICLE_NOT_FOUND_ERROR_MESSAGE } from './article.constants';
-import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { GetArticleDto } from './dto/get-article.dto';
 import { ResponseItems } from '../core/interfaces/response-items.dto';
 import { ResponseArticlesDto } from './dto/response-articles.dto';
@@ -61,7 +59,7 @@ export class ArticlesController {
     type: Article,
     description: 'Create a article',
   })
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   public async createArticle(@Body() dto: CreateArticleDto): Promise<Article> {
     return await this.articlesService.create(dto);
   }
@@ -71,7 +69,7 @@ export class ArticlesController {
     type: Article,
     description: 'Update a article',
   })
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   public async updateArticle(
     @Param('id') id: string,
     @Body() dto: CreateArticleDto,
@@ -80,7 +78,7 @@ export class ArticlesController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   public deleteArticle(@Param('id') id: string): Promise<void> {
     return this.articlesService.delete(id);
   }
