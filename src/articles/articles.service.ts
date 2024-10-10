@@ -26,10 +26,9 @@ export class ArticlesService implements OnModuleInit {
 
   public async findAll(dto: GetArticleDto): Promise<ResponseItems<Article>> {
     const { search, page, limit, sortField, sortOrder, tags, emails } = dto;
-    const tagsArr = tags ? tags.split(',').map((item) => Number(item)) : [];
-    const emailsArr = emails
-      ? emails.split(',').map((item) => Number(item))
-      : [];
+
+    const tagsArr = tags ? tags.split(',') : [];
+    const emailsArr = emails ? emails : [];
 
     const qb = this.articleRepository.createQueryBuilder('article');
 
@@ -41,16 +40,27 @@ export class ArticlesService implements OnModuleInit {
     }
 
     if (tagsArr.length > 0) {
-      qb.andWhere('tag.id IN (:...tagsArr)', { tagsArr });
+      qb.innerJoin(
+        'article.tags',
+        'tags_filter',
+        'tags_filter.id IN (:...tagsArr)',
+        { tagsArr },
+      );
     }
 
     if (emailsArr.length > 0) {
-      qb.andWhere('email.id IN (:...emailsArr)', { emailsArr });
+      qb.innerJoin(
+        'article.emailsToSend',
+        'emails_filter',
+        'emails_filter.id IN (:...emailsArr)',
+        { emailsArr },
+      );
     }
 
-    const currentPage = page || 1;
-    const pageSize = limit || 10;
+    qb.distinct(true);
 
+    const currentPage = parseInt(String(page), 10) || 1;
+    const pageSize = parseInt(String(limit), 10) || 10;
     qb.skip((currentPage - 1) * pageSize).take(pageSize);
 
     if (sortField) {
@@ -73,6 +83,7 @@ export class ArticlesService implements OnModuleInit {
   public async findById(id: string | number): Promise<Article> {
     return await this.articleRepository.findOne({
       where: { id: +id },
+      relations: ['tags', 'emailsToSend'],
     });
   }
 

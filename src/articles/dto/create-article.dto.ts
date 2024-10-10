@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 import { CreateTagDto } from '../../tags/dto/create-tag.dto';
-import { Email } from '../../emails/email.model';
 import { CreateEmailDto } from '../../emails/dto/create-email.dto';
 
 export class CreateArticleDto {
