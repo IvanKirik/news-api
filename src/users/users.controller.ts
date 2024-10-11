@@ -1,6 +1,6 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { ResponseItems } from '../shared/interfaces/response-items.dto';
 import { UserModel } from './user.model';
 import { GetUsersDto } from './dto/get-users.dto';
@@ -30,7 +30,9 @@ export class UsersController {
     type: UserModel,
     description: 'Get current user',
   })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   public async getArticles(
     @UserEmail() email: string,
   ): Promise<Omit<UserModel, 'passwordHash' | 'refreshToken'>> {

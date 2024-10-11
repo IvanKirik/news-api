@@ -6,13 +6,21 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { Tag } from '../tags/tag.model';
 import { GetTagDto } from '../tags/dto/get-tag.dto';
 import { EmailsService } from './emails.service';
 import { Email } from './email.model';
 import { CreateEmailDto } from './dto/create-email.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
 @ApiTags('Emails')
 @Controller('emails')
@@ -48,6 +56,9 @@ export class EmailsController {
     type: Email,
     description: 'Create email',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   public async create(@Body() dto: CreateEmailDto): Promise<Email> {
     return await this.emailsService.createEmail(dto);
   }
@@ -62,6 +73,9 @@ export class EmailsController {
   @ApiOkResponse({
     description: 'Delete email',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   public async delete(@Param('id') id: string): Promise<void> {
     return await this.emailsService.deleteEmail(id);
   }
@@ -77,6 +91,9 @@ export class EmailsController {
     type: Tag,
     description: 'Update email',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   public async update(
     @Param() id: string,
     @Body() dto: CreateEmailDto,

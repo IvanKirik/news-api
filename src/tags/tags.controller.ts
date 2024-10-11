@@ -6,12 +6,20 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { TagsService } from './tags.service';
 import { Tag } from './tag.model';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { GetTagDto } from './dto/get-tag.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
 @ApiTags('Tags')
 @Controller('tags')
@@ -47,6 +55,9 @@ export class TagsController {
     type: Tag,
     description: 'Create tag',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   public async createTag(@Body() dto: CreateTagDto): Promise<Tag> {
     return await this.tagsService.createTag(dto);
   }
@@ -61,6 +72,9 @@ export class TagsController {
   @ApiOkResponse({
     description: 'Delete tag',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   public async deleteTag(@Param('id') id: string): Promise<void> {
     return await this.tagsService.deleteTag(id);
   }
@@ -76,6 +90,9 @@ export class TagsController {
     type: Tag,
     description: 'Update tag',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   public async updateTag(
     @Param() id: string,
     @Body() dto: CreateTagDto,

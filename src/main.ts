@@ -11,6 +11,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   const config = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('News api')
     .setVersion('1.0')
     .build();

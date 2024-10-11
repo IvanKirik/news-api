@@ -9,17 +9,25 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { Article } from './article.model';
-import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { ARTICLE_NOT_FOUND_ERROR_MESSAGE } from './article.constants';
 import { GetArticleDto } from './dto/get-article.dto';
 import { ResponseItems } from '../shared/interfaces/response-items.dto';
 import { ResponseArticlesDto } from './dto/response-articles.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
 @ApiTags('Articles')
 @Controller('articles')
@@ -65,7 +73,9 @@ export class ArticlesController {
     type: Article,
     description: 'Create a article',
   })
-  // @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   public async createArticle(@Body() dto: CreateArticleDto): Promise<Article> {
     return await this.articlesService.create(dto);
   }
@@ -81,7 +91,9 @@ export class ArticlesController {
     type: Article,
     description: 'Update a article',
   })
-  // @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   public async updateArticle(
     @Param('id') id: string,
     @Body() dto: CreateArticleDto,
@@ -96,7 +108,9 @@ export class ArticlesController {
     description: 'ID of the article to retrieve',
     type: String,
   })
-  // @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   public deleteArticle(@Param('id') id: string): Promise<void> {
     return this.articlesService.delete(id);
   }
