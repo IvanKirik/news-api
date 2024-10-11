@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Tag } from '../tags/tag.model';
 import { GetTagDto } from '../tags/dto/get-tag.dto';
 import { EmailsService } from './emails.service';
@@ -29,6 +29,12 @@ export class EmailsController {
   }
 
   @Get(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID of the email to retrieve',
+    type: String,
+  })
   @ApiOkResponse({
     type: Email,
     description: 'Get email by id',
@@ -47,6 +53,12 @@ export class EmailsController {
   }
 
   @Delete(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID of the email to retrieve',
+    type: String,
+  })
   @ApiOkResponse({
     description: 'Delete email',
   })
@@ -55,6 +67,12 @@ export class EmailsController {
   }
 
   @Patch(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID of the email to retrieve',
+    type: String,
+  })
   @ApiOkResponse({
     type: Tag,
     description: 'Update email',

@@ -1,46 +1,46 @@
 import {
+  BadRequestException,
   Injectable,
   OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { UserModel } from './user.model';
+import { UserModel } from '../users/user.model';
 import { AuthDto } from './dto/auth.dto';
 import { compare, genSalt, hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import {
+  ALREADY_REGISTERED_ERROR,
   INVALID_REFRESH_TOKEN,
   USER_NOT_FOUND,
   WRONG_PASSWORD_ERROR,
 } from './auth.constants';
 import { ConfigService } from '@nestjs/config';
 import { TokensResponseDto } from './dto/tokens-response.dto';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
   constructor(
-    @InjectRepository(UserModel)
-    private readonly userRepository: Repository<UserModel>,
+    private readonly userService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
 
-  public async createUser(dto: AuthDto) {
+  public async registerUser(dto: AuthDto) {
+    const oldUser = await this.userService.findUser(dto.email);
+    if (oldUser) {
+      throw new BadRequestException(ALREADY_REGISTERED_ERROR);
+    }
     const salt = await genSalt(10);
-    const user = this.userRepository.create({
+    const user = {
       email: dto.email,
       passwordHash: await hash(dto.password, salt),
-    });
-    await this.userRepository.save(user);
-  }
-
-  public async findUser(email: string): Promise<UserModel> {
-    return await this.userRepository.findOne({ where: { email } });
+    };
+    await this.userService.createUser(user);
   }
 
   async validateUser(email: string, password: string): Promise<UserModel> {
-    const user = (await this.findUser(email)) as UserModel;
+    const user = (await this.userService.findUser(email)) as UserModel;
     if (!user) {
       throw new UnauthorizedException(USER_NOT_FOUND);
     }
@@ -60,17 +60,13 @@ export class AuthService implements OnModuleInit {
   }
 
   public async onModuleInit(): Promise<void> {
-    const adminExists = await this.userRepository.findOne({
-      where: { email: 'admin@example.com' },
-    });
+    const adminExists = await this.userService.findUser('admin@example.com');
 
     if (!adminExists) {
-      const admin = this.userRepository.create({
+      await this.userService.createUser({
         email: 'admin@example.com',
         passwordHash: await hash('password', 10),
       });
-
-      await this.userRepository.save(admin);
     }
   }
 
@@ -79,7 +75,7 @@ export class AuthService implements OnModuleInit {
       const payload = await this.jwtService.verify(refreshToken, {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
       });
-      const user = await this.findUser(payload.email);
+      const user = await this.userService.findUser(payload.email);
       if (
         !user ||
         !user.refreshToken ||
@@ -116,7 +112,7 @@ export class AuthService implements OnModuleInit {
 
     const hashedRefreshToken = await hash(refreshToken, 10);
 
-    await this.userRepository.update(user.id, {
+    await this.userService.updateUser(user.id, {
       refreshToken: hashedRefreshToken,
     });
 

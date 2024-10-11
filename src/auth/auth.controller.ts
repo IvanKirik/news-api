@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   HttpCode,
@@ -10,7 +9,6 @@ import {
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
-import { ALREADY_REGISTERED_ERROR } from './auth.constants';
 import { RefreshDto } from './dto/refresh.dto';
 import { TokensResponseDto } from './dto/tokens-response.dto';
 
@@ -22,11 +20,7 @@ export class AuthController {
   @UsePipes(new ValidationPipe())
   @Post('register')
   public async register(@Body() dto: AuthDto) {
-    const oldUser = await this.authService.findUser(dto.email);
-    if (oldUser) {
-      throw new BadRequestException(ALREADY_REGISTERED_ERROR);
-    }
-    await this.authService.createUser(dto);
+    await this.authService.registerUser(dto);
   }
 
   @UsePipes(new ValidationPipe())

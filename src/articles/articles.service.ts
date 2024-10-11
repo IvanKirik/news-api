@@ -10,7 +10,10 @@ import { Repository } from 'typeorm';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { ARTICLE_NOT_FOUND_ERROR_MESSAGE } from './article.constants';
 import { GetArticleDto } from './dto/get-article.dto';
-import { ResponseItems } from '../core/interfaces/response-items.dto';
+import {
+  ResponseItems,
+  ResponseItemsDto,
+} from '../shared/interfaces/response-items.dto';
 import { articles } from './articles.init';
 import { TagsService } from '../tags/tags.service';
 import { EmailsService } from '../emails/emails.service';
@@ -71,13 +74,13 @@ export class ArticlesService implements OnModuleInit {
 
     const [items, total] = await qb.getManyAndCount();
 
-    return {
-      data: items,
-      total,
-      page: currentPage,
+    return new ResponseItemsDto(
+      items,
+      page,
       pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    };
+      total,
+      Math.ceil(total / pageSize),
+    );
   }
 
   public async findById(id: string | number): Promise<Article> {

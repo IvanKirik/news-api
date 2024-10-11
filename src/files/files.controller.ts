@@ -41,7 +41,6 @@ export class FilesController {
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
   ): Promise<FileElementResponse[]> {
-    console.log(file);
     const saveArr: MediaFile[] = [new MediaFile(file)];
     if (file.mimetype.includes('image')) {
       const buffer = await this.filesService.convertToWebp(file.buffer);

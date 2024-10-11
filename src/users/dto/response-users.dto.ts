@@ -1,10 +1,10 @@
-import { Article } from '../article.model';
 import { ResponseItems } from '../../shared/interfaces/response-items.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserModel } from '../user.model';
 
-export class ResponseArticlesDto implements ResponseItems<Article> {
-  @ApiProperty({ type: [Article] })
-  data: Article[];
+export class ResponseUsersDto implements ResponseItems<UserModel> {
+  @ApiProperty({ type: [UserModel] })
+  data: UserModel[];
 
   @ApiProperty({ type: Number })
   page: number;

@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { TagsService } from './tags.service';
 import { Tag } from './tag.model';
 import { CreateTagDto } from './dto/create-tag.dto';
@@ -28,6 +28,12 @@ export class TagsController {
   }
 
   @Get(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID of the tag to retrieve',
+    type: String,
+  })
   @ApiOkResponse({
     type: Tag,
     description: 'Get tag by id',
@@ -46,6 +52,12 @@ export class TagsController {
   }
 
   @Delete(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID of the tag to retrieve',
+    type: String,
+  })
   @ApiOkResponse({
     description: 'Delete tag',
   })
@@ -54,6 +66,12 @@ export class TagsController {
   }
 
   @Patch(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID of the tag to retrieve',
+    type: String,
+  })
   @ApiOkResponse({
     type: Tag,
     description: 'Update tag',

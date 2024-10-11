@@ -14,11 +14,11 @@ import {
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { Article } from './article.model';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { ARTICLE_NOT_FOUND_ERROR_MESSAGE } from './article.constants';
 import { GetArticleDto } from './dto/get-article.dto';
-import { ResponseItems } from '../core/interfaces/response-items.dto';
+import { ResponseItems } from '../shared/interfaces/response-items.dto';
 import { ResponseArticlesDto } from './dto/response-articles.dto';
 
 @ApiTags('Articles')
@@ -38,6 +38,12 @@ export class ArticlesController {
   }
 
   @Get(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID of the article to retrieve',
+    type: String,
+  })
   @ApiOkResponse({
     type: Article,
     description: 'Get a article',
@@ -65,6 +71,12 @@ export class ArticlesController {
   }
 
   @Patch(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID of the article to retrieve',
+    type: String,
+  })
   @ApiOkResponse({
     type: Article,
     description: 'Update a article',
@@ -78,6 +90,12 @@ export class ArticlesController {
   }
 
   @Delete(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID of the article to retrieve',
+    type: String,
+  })
   // @UseGuards(JwtAuthGuard)
   public deleteArticle(@Param('id') id: string): Promise<void> {
     return this.articlesService.delete(id);
