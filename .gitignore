@@ -4,6 +4,8 @@
 /build
 /uploads
 
+*.env
+
 # Logs
 logs
 *.log
