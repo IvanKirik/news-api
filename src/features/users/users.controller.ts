@@ -1,12 +1,17 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
-import { ResponseItems } from '../shared/interfaces/response-items.dto';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { ResponseItems } from '../../shared/interfaces/response-items.dto';
 import { UserModel } from './user.model';
 import { GetUsersDto } from './dto/get-users.dto';
 import { ResponseUsersDto } from './dto/response-users.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
-import { UserEmail } from '../shared/decorators/user-emails.decorator';
+import { UserEmail } from '../../shared/decorators/user-emails.decorator';
 
 @ApiTags('Users')
 @Controller('users')

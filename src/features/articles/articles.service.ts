@@ -13,7 +13,7 @@ import { GetArticleDto } from './dto/get-article.dto';
 import {
   ResponseItems,
   ResponseItemsDto,
-} from '../shared/interfaces/response-items.dto';
+} from '../../shared/interfaces/response-items.dto';
 import { articles } from './articles.init';
 import { TagsService } from '../tags/tags.service';
 import { EmailsService } from '../emails/emails.service';

@@ -1,5 +1,5 @@
 import { Article } from '../article.model';
-import { ResponseItems } from '../../shared/interfaces/response-items.dto';
+import { ResponseItems } from '../../../shared/interfaces/response-items.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ResponseArticlesDto implements ResponseItems<Article> {

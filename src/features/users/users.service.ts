@@ -7,7 +7,7 @@ import { GetUsersDto } from './dto/get-users.dto';
 import {
   ResponseItems,
   ResponseItemsDto,
-} from '../shared/interfaces/response-items.dto';
+} from '../../shared/interfaces/response-items.dto';
 
 @Injectable()
 export class UsersService {
@@ -63,10 +63,11 @@ export class UsersService {
       email: emailUser,
       createdAt,
       updatedAt,
+      speciality,
     } = await this.userRepository.findOne({
       where: { email },
     });
-    return { id, email: emailUser, createdAt, updatedAt };
+    return { id, email: emailUser, speciality, createdAt, updatedAt };
   }
 
   public async createUser(dto: CreateUserDto) {

@@ -25,7 +25,7 @@ import {
 import { CreateArticleDto } from './dto/create-article.dto';
 import { ARTICLE_NOT_FOUND_ERROR_MESSAGE } from './article.constants';
 import { GetArticleDto } from './dto/get-article.dto';
-import { ResponseItems } from '../shared/interfaces/response-items.dto';
+import { ResponseItems } from '../../shared/interfaces/response-items.dto';
 import { ResponseArticlesDto } from './dto/response-articles.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
