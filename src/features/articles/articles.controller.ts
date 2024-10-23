@@ -25,9 +25,10 @@ import {
 import { CreateArticleDto } from './dto/create-article.dto';
 import { ARTICLE_NOT_FOUND_ERROR_MESSAGE } from './article.constants';
 import { GetArticleDto } from './dto/get-article.dto';
-import { ResponseItems } from '../shared/interfaces/response-items.dto';
+import { ResponseItems } from '../../shared/interfaces/response-items.dto';
 import { ResponseArticlesDto } from './dto/response-articles.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { SendArticlesDto } from './dto/send-articles.dto';
 
 @ApiTags('Articles')
 @Controller('articles')
@@ -43,6 +44,15 @@ export class ArticlesController {
     @Query() params: GetArticleDto,
   ): Promise<ResponseItems<Article>> {
     return await this.articlesService.findAll(params);
+  }
+
+  @Get('list')
+  @ApiOkResponse({
+    type: [Article],
+    description: 'Get a articles list',
+  })
+  public async getArticlesList(): Promise<Article[]> {
+    return await this.articlesService.getListAll();
   }
 
   @Get(':id')
@@ -113,5 +123,19 @@ export class ArticlesController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   public deleteArticle(@Param('id') id: string): Promise<void> {
     return this.articlesService.delete(id);
+  }
+
+  @UsePipes(new ValidationPipe())
+  @Post('send')
+  @ApiOkResponse({
+    type: String,
+    description: 'Send articles',
+  })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  public sendArticles(@Body() dto: SendArticlesDto): string {
+    console.log(dto);
+    return this.articlesService.sendArticles();
   }
 }

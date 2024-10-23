@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
-import { ArticlesModule } from './articles/articles.module';
+import { ArticlesModule } from './features/articles/articles.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { postgresConfig } from './config/postgres.config';
-import { FilesModule } from './files/files.module';
-import { AuthModule } from './auth/auth.module';
-import { TagsModule } from './tags/tags.module';
-import { EmailsModule } from './emails/emails.module';
-import { UsersModule } from './users/users.module';
+import { FilesModule } from './features/files/files.module';
+import { AuthModule } from './features/auth/auth.module';
+import { TagsModule } from './features/tags/tags.module';
+import { EmailsModule } from './features/emails/emails.module';
+import { UsersModule } from './features/users/users.module';
+import { SpecialityModule } from './features/speciality/speciality.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { UsersModule } from './users/users.module';
     TagsModule,
     EmailsModule,
     UsersModule,
+    SpecialityModule,
   ],
 })
 export class AppModule {}

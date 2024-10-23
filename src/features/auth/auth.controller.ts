@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { TokensResponseDto } from './dto/tokens-response.dto';
+import { LoginDto } from './dto/login.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -30,7 +31,7 @@ export class AuthController {
   })
   @HttpCode(200)
   @Post('login')
-  public async login(@Body() dto: AuthDto) {
+  public async login(@Body() dto: LoginDto) {
     const user = await this.authService.validateUser(dto.email, dto.password);
     return this.authService.login(user);
   }

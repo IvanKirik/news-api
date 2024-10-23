@@ -1,27 +1,26 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
-  CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
+  ManyToMany,
+  CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
+import { Article } from '../articles/article.model';
 
-@Entity('users')
-export class UserModel {
+@Entity('tags')
+export class Tag {
   @ApiProperty({ type: Number })
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @ApiProperty({ type: String })
   @Column({ unique: true })
-  email: string;
+  public name: string;
 
-  @Column()
-  passwordHash: string;
-
-  @Column({ nullable: true })
-  refreshToken: string;
+  @ManyToMany(() => Article, (article) => article.tags)
+  public articles: Article[];
 
   @ApiProperty({ type: String })
   @CreateDateColumn({ type: 'timestamptz' })

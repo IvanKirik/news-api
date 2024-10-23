@@ -1,4 +1,4 @@
-import { ResponseItems } from '../../shared/interfaces/response-items.dto';
+import { ResponseItems } from '../../../shared/interfaces/response-items.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserModel } from '../user.model';
 

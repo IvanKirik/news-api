@@ -4,7 +4,7 @@ import {
   OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserModel } from '../users/user.model';
+import { Role, UserModel } from '../users/user.model';
 import { AuthDto } from './dto/auth.dto';
 import { compare, genSalt, hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
@@ -17,6 +17,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { TokensResponseDto } from './dto/tokens-response.dto';
 import { UsersService } from '../users/users.service';
+import { SpecialityService } from '../speciality/speciality.service';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -24,6 +25,7 @@ export class AuthService implements OnModuleInit {
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly specialityService: SpecialityService,
   ) {}
 
   public async registerUser(dto: AuthDto) {
@@ -31,9 +33,12 @@ export class AuthService implements OnModuleInit {
     if (oldUser) {
       throw new BadRequestException(ALREADY_REGISTERED_ERROR);
     }
+    const specialities = await this.specialityService.findByIds(dto.speciality);
     const salt = await genSalt(10);
     const user = {
       email: dto.email,
+      name: dto.name,
+      speciality: specialities,
       passwordHash: await hash(dto.password, salt),
     };
     await this.userService.createUser(user);
@@ -65,8 +70,10 @@ export class AuthService implements OnModuleInit {
     if (!adminExists) {
       await this.userService.createUser({
         email: 'admin@example.com',
+        role: Role.ADMIN,
+        name: 'Администратор',
         passwordHash: await hash('password', 10),
-      });
+      } as any);
     }
   }
 
