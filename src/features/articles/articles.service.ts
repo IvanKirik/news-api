@@ -27,6 +27,13 @@ export class ArticlesService implements OnModuleInit {
     private readonly emailsService: EmailsService,
   ) {}
 
+  public async getListAll(): Promise<Article[]> {
+    const qb = this.articleRepository.createQueryBuilder('article');
+    qb.select(['article.id', 'article.title', 'article.image']);
+    const [items] = await qb.getManyAndCount();
+    return items;
+  }
+
   public async findAll(dto: GetArticleDto): Promise<ResponseItems<Article>> {
     const { search, page, limit, sortField, sortOrder, tags, emails } = dto;
 
@@ -187,6 +194,10 @@ export class ArticlesService implements OnModuleInit {
       );
     }
     await this.articleRepository.delete(id);
+  }
+
+  public sendArticles(): string {
+    return 'Дайджесты отправлены';
   }
 
   public async onModuleInit(): Promise<void> {

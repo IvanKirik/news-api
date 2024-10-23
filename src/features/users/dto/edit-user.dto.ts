@@ -1,14 +1,9 @@
-import { IsString, MaxLength, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString, MaxLength } from 'class-validator';
+import { Column } from 'typeorm';
+import { Role } from '../user.model';
 
-export class AuthDto {
-  @ApiProperty({
-    required: true,
-    maxLength: 255,
-  })
-  @IsString()
-  email: string;
-
+export class EditUserDto {
   @ApiProperty({
     required: true,
     maxLength: 100,
@@ -18,12 +13,15 @@ export class AuthDto {
   name: string;
 
   @ApiProperty({
-    required: true,
-    minLength: 6,
+    enum: Role,
+    default: Role.USER,
   })
-  @MinLength(6)
-  @IsString()
-  password: string;
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.USER,
+  })
+  role: Role;
 
   @ApiProperty({
     required: true,

@@ -45,6 +45,16 @@ export class SpecialityService implements OnModuleInit {
     return item;
   }
 
+  public async findByIds(ids: number[]): Promise<Speciality[]> {
+    const item = await this.specialityRepository.findByIds(ids);
+    if (!item) {
+      throw new NotFoundException(
+        `Speciality with id ${ids.toString()} not found`,
+      );
+    }
+    return item;
+  }
+
   public async delete(id: string): Promise<void> {
     const item = await this.specialityRepository.findOne({
       where: { id: +id },

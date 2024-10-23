@@ -10,6 +10,11 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Speciality } from '../speciality/speciality.model';
 
+export enum Role {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+}
+
 @Entity('users')
 export class UserModel {
   @ApiProperty({ type: Number })
@@ -17,8 +22,23 @@ export class UserModel {
   id: number;
 
   @ApiProperty({ type: String })
+  @Column({ nullable: true })
+  name: string;
+
+  @ApiProperty({ type: String })
   @Column({ unique: true })
   email: string;
+
+  @ApiProperty({
+    enum: Role,
+    default: Role.USER,
+  })
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.USER,
+  })
+  role: Role;
 
   @Column()
   passwordHash: string;

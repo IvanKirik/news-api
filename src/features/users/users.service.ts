@@ -8,12 +8,14 @@ import {
   ResponseItems,
   ResponseItemsDto,
 } from '../../shared/interfaces/response-items.dto';
+import { SpecialityService } from '../speciality/speciality.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserModel)
     private readonly userRepository: Repository<UserModel>,
+    private readonly specialityService: SpecialityService,
   ) {}
 
   public async findAll(dto: GetUsersDto): Promise<ResponseItems<UserModel>> {
@@ -21,11 +23,17 @@ export class UsersService {
 
     const qb = this.userRepository.createQueryBuilder('users');
 
+    qb.leftJoinAndSelect('users.speciality', 'speciality');
+
     qb.select([
       'users.id',
+      'users.name',
       'users.email',
+      'users.role',
       'users.createdAt',
       'users.updatedAt',
+      'speciality.id',
+      'speciality.name',
     ]);
 
     if (search) {
@@ -39,7 +47,11 @@ export class UsersService {
     qb.skip((currentPage - 1) * pageSize).take(pageSize);
 
     if (sortField) {
-      qb.orderBy(`users.${sortField}`, sortOrder || 'ASC');
+      if (sortField === 'speciality') {
+        qb.orderBy('speciality.name', sortOrder || 'ASC');
+      } else {
+        qb.orderBy(`users.${sortField}`, sortOrder || 'ASC');
+      }
     } else {
       qb.orderBy('users.createdAt', 'DESC');
     }
@@ -61,13 +73,23 @@ export class UsersService {
     const {
       id,
       email: emailUser,
+      name,
+      role,
       createdAt,
       updatedAt,
       speciality,
     } = await this.userRepository.findOne({
       where: { email },
     });
-    return { id, email: emailUser, speciality, createdAt, updatedAt };
+    return {
+      id,
+      email: emailUser,
+      name,
+      role,
+      speciality,
+      createdAt,
+      updatedAt,
+    };
   }
 
   public async createUser(dto: CreateUserDto) {
@@ -80,6 +102,32 @@ export class UsersService {
   }
 
   public async updateUser(id: number, user: Partial<UserModel>) {
-    await this.userRepository.update(id, user);
+    const existingUser = await this.userRepository.findOne({
+      where: { id },
+      relations: ['speciality'],
+    });
+
+    if (!existingUser) {
+      throw new Error(`User with id ${id} not found`);
+    }
+
+    await this.userRepository.save({
+      ...existingUser,
+      ...user,
+    });
+
+    if (user.speciality) {
+      const specialities = await this.specialityService.findByIds(
+        user.speciality as any,
+      );
+
+      existingUser.speciality = specialities;
+      await this.userRepository.save(existingUser);
+    }
+
+    return this.userRepository.findOne({
+      where: { id },
+      relations: ['speciality'],
+    });
   }
 }
